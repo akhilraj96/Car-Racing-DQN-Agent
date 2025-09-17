@@ -1,4 +1,4 @@
-# 🏎️ AI Learns to Drive — CarRacing-v3 DQN Agent
+# 🏎️ Car Racing DQN Agent — AI Learns to Drive
 
 This project trains a **Deep Q-Network (DQN)** agent to solve the **CarRacing-v3** environment from [Gymnasium](https://gymnasium.farama.org/).  
 The agent learns to drive around procedurally generated tracks by **perceiving raw pixels** and optimizing long-term rewards.
@@ -192,7 +192,7 @@ The training loop (`train.py`) implements:
 
 ---
 
-## 📊 Results (Example)
+## 📊 Results
 
 > Your results will vary depending on seeds and hyperparams.
 
