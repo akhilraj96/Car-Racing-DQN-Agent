@@ -49,7 +49,7 @@ The key ideas:
 
 ```bash
 # clone project
-git clone https://github.com/your-username/carracing-dqn.git
+git clone https://github.com/akhilraj96/Car-Racing-DQN-Agent.git
 cd carracing-dqn
 
 # create virtual environment
