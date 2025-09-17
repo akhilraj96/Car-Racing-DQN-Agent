@@ -15,6 +15,8 @@ dist-ssr
 env/
 runs/
 
+*.cpython-310.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
