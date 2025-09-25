@@ -214,3 +214,192 @@ The training loop (`train.py`) implements:
 
 ## 📜 License
 MIT License. Free to use, modify, and share.
+
+
+
+
+# Car-Racing DQN Agent 🏎️💨
+
+This repository implements a **Deep Q-Network (DQN) agent** for the **CarRacing-v3** environment in Gymnasium.
+The agent leverages **dueling noisy networks**, **frame stacking**, and **reward shaping** to learn smooth and efficient driving policies.
+
+---
+
+## 📦 Project Structure
+
+```
+.
+├── buffer.py            # Replay buffer for experience replay
+├── dqn_agent.py         # DQN agent implementation with online and target networks
+├── evaluate.py          # Evaluate a trained agent with optional video recording
+├── models.py            # Neural network architectures (Dueling Noisy CNN)
+├── train.py             # Training script for the agent
+├── utils.py             # Utilities: epsilon schedule, seeding, average meter
+├── wrappers.py          # Environment wrappers: preprocessing, frame stacking, sticky actions, discrete actions
+├── requirements.txt     # Python dependencies
+└── README.md            # This file
+```
+
+---
+
+## ⚙️ Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/akhilraj96/Car-Racing-DQN-Agent.git
+cd Car-Racing-DQN-Agent
+
+# Create and activate a virtual environment (Python 3.10)
+conda create -p env python=3.10 -y
+conda activate env/
+
+# Upgrade pip and install dependencies
+python -m pip install --upgrade pip setuptools wheel
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+pip install -r requirements.txt
+pip install gymnasium[box2d] swig
+```
+
+**Dependencies include:**
+
+* `gymnasium[classic-control, box2d]`
+* `numpy`, `opencv-python`
+* `torch`, `tensorboard`
+* `imageio[ffmpeg, pyav]`
+* `tqdm`
+
+---
+
+## 🚀 Training
+
+Start training the DQN agent in CarRacing-v3.
+
+### Modes
+
+* **No video (fastest training)**:
+
+```bash
+python train.py --video-mode none --run-name dqn_run1
+```
+
+* **Live visualization** (slower, renders every step):
+
+```bash
+python train.py --video-mode live --run-name dqn_run1
+```
+
+* **Record videos every N episodes**:
+
+```bash
+python train.py --video-mode record --record-every 50 --run-name dqn_run1
+```
+
+### Key Arguments
+
+| Argument           | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `--run-name NAME`  | Name for logs/checkpoints (default: `dqn_run`)  |
+| `--total-steps N`  | Total environment steps (default: 1,000,000)    |
+| `--video-mode`     | Rendering mode: `none`, `live`, `record`        |
+| `--save-every N`   | Checkpoint frequency in steps (default: 50,000) |
+| `--record-every N` | Save video every N episodes (default: 10)       |
+
+**Output directories:**
+
+```
+runs/dqn_run1/checkpoints/
+runs/dqn_run1/videos/
+```
+
+---
+
+## 🎮 Evaluation
+
+Evaluate a trained agent on the environment:
+
+```bash
+python evaluate.py --checkpoint runs/dqn_run1/checkpoints/latest.pt --episodes 10
+```
+
+### Evaluation Arguments
+
+| Argument            | Description                                  |
+| ------------------- | -------------------------------------------- |
+| `--checkpoint PATH` | Path to saved model weights                  |
+| `--episodes N`      | Number of episodes to evaluate (default: 10) |
+| `--device`          | Run on `cpu` or `cuda`                       |
+| `--video-mode`      | `none`, `live`, or `record`                  |
+
+Recorded videos will be saved in `runs/videos/` if `--video-mode record` is selected.
+
+---
+
+## 🧠 Key Features
+
+* **Dueling DQN with NoisyNet** for better exploration
+* **Frame stacking** for temporal context
+* **Reward shaping**:
+
+  * Off-track penalty
+  * Speed reward
+  * Smooth driving penalty
+  * Progress reward per track tile
+* **Sticky actions wrapper** to handle environment stochasticity
+* **TensorBoard logging** for training metrics:
+
+  * Episode rewards
+  * Step-wise rewards
+  * TD loss
+  * Epsilon schedule
+
+---
+
+## 🖥️ Environment Wrappers
+
+* `PreprocessFrame` → Converts RGB frames to grayscale and resizes to 84x84
+* `FrameStack` → Stacks last 4 frames to capture temporal information
+* `StickyActions` → Repeats previous actions with a small probability
+* `DiscreteActionWrapper` → Maps continuous controls to 9 discrete actions
+
+---
+
+## 🧩 Neural Network
+
+**Dueling Noisy CNN** architecture:
+
+```
+Input: (4 stacked frames, 84x84)
+Conv layers: [32x8x8 stride 4] → [64x4x4 stride 2] → [64x3x3 stride 1]
+Dueling streams:
+  - Value: FC → 512 → 1
+  - Advantage: FC → 512 → n_actions
+NoisyLinear layers for exploration
+```
+
+---
+
+## 📈 Training & Evaluation Tips
+
+* Use `--video-mode none` for faster training without rendering
+* Adjust epsilon decay (`--eps-start`, `--eps-end`, `--eps-decay-steps`) for exploration
+* Check TensorBoard logs with:
+
+```bash
+tensorboard --logdir runs/dqn_run1
+```
+
+* Periodically evaluate the agent using `evaluate.py` to monitor progress
+
+---
+
+## 📜 References
+
+* [DQN: Human-level control through deep reinforcement learning](https://www.nature.com/articles/nature14236)
+* [Dueling Network Architectures for Deep Reinforcement Learning](https://arxiv.org/abs/1511.06581)
+* [Noisy Networks for Exploration](https://arxiv.org/abs/1706.10295)
+
+---
+
+## 📝 License
+
+This repository is open-source under the MIT License.

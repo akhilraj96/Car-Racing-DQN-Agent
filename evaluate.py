@@ -64,7 +64,7 @@ def main():
                 frames.append(env.render())
 
         if args.video_mode == 'record':
-            video_path = f'run_videos/recording_ep{ep+1}.mp4'
+            video_path = f'runs/videos/recording_ep{ep+1}.mp4'
             imageio.mimsave(video_path, frames, fps=30)
             print(f"Saved episode {ep+1} video to {video_path}")
 
